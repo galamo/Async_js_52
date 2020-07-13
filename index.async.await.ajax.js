@@ -9,6 +9,16 @@ function getProductsFromServer () {
     })
 }
 
+function getCountriesFromServer () {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: "https://restcountries.eu/rest/v2/all",
+        }).done(function (data) {
+            resolve(data)
+        })
+    })
+}
+
 
 function searchProductsFromServer (name) {
     return new Promise((res, rej) => {
@@ -17,7 +27,7 @@ function searchProductsFromServer (name) {
             const result = products.filter(p => p.item === name)
             if (!result.length) rej(`no result for the relevant search ${name}`)
             res(result)
-        }, 1000)
+        }, 10000)
     })
 
 }
@@ -25,7 +35,7 @@ function searchProductsFromServer (name) {
 // function () { ================ callback
 // } ================ callback
 
-function init () {
+async function init () {
     const loader = $('<div class="loader"></div>')
 
     const searchValue = $("#searchValue")
@@ -33,25 +43,31 @@ function init () {
     const container = $("#productsContainer")
     container.html(loader)
 
-    searchOperation.on("click", function () {
+    searchOperation.on("click", async function () {
         console.log("search start")
         console.log("loader start")
         container.html(loader)
         //resolve =>>> then
         // reject =>>> catch
 
-        searchProductsFromServer(searchValue.val()).then((productssssssss) => {
-            draw(productssssssss)
-        }).catch((err) => {
+        try {
+            const result = await searchProductsFromServer(searchValue.val())
+
+            console.log("this is blocked!!!!!!!")
+            draw(result)
+        } catch (err) {
             alert(err)
             container.empty()
-        })
-
-
+        }
         console.log("search end")
     })
 
-    getProductsFromServer().then((products) => { draw(products) })
+    const result = await getProductsFromServer()
+    const countries = await getCountriesFromServer()
+    console.log(countries)
+    draw(result)
+
+
 
 
 
@@ -87,9 +103,21 @@ init()
 
 
 
+// $.ajax({
+//     url: "test.html",
+//     context: document.body
+//   }).done(function() {
+//     $( this ).addClass( "done" );
+//   });
 
 
-
+// async function someFunc(){
+//     const result = await fromServer()
+//     const result = await fromServer()
+//     const result = await fromServer()
+//     const result = await fromServer()
+//     const result = await fromServer()
+// }
 
 
 
