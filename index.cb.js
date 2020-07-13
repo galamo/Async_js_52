@@ -3,20 +3,46 @@
 function getProductsFromServer (callback) {
     setTimeout(() => {
         callback(products)
-    }, 5000)
+    }, 2000)
+}
+
+function searchProductsFromServer (callback, name) {
+    setTimeout(() => {
+        callback(products.filter(p => p.item === name))
+    }, 2000)
 }
 
 // function () { ================ callback
 // } ================ callback
 
 function init () {
+    const loader = $('<div class="loader"></div>')
+
+    const searchValue = $("#searchValue")
+    const searchOperation = $("#searchOperation")
     const container = $("#productsContainer")
+    container.html(loader)
+
+    searchOperation.on("click", function () {
+        container.html(loader)
+        searchProductsFromServer(function (products) {
+            draw(products)
+        }, searchValue.val())
+    })
+
+
+
     getProductsFromServer(function (products) {
+        draw(products)
+    })
+
+    function draw (products) {
+        container.empty()
         const listItems = products.map((product) => {
             return getListItem(product)
         })
         container.append(...listItems)
-    })
+    }
 
     function getListItem (productData) {
         const { item, price } = productData
