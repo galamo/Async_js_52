@@ -9,6 +9,14 @@ function getProductsFromServer () {
     })
 }
 
+
+async function getFromServer () {
+    const a = await fetch("https://restcountries.eu/rest/v2/all")
+    const b = await a.data
+    return b
+}
+
+
 function getCountriesFromServer () {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -18,6 +26,17 @@ function getCountriesFromServer () {
         })
     })
 }
+
+$.ajax({
+    url: "https://restcounies.eu/rest/v2/all", success: function (result) {
+        console.log(result)
+    }, error: function (ex) {
+        console.log(111)
+    }, finally: function () {
+        console.log(112121324311)
+    }
+})
+
 
 
 function searchProductsFromServer (name) {

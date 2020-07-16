@@ -71,7 +71,6 @@ init()
 
 
 
-
 // const a = function (products) {
 //     const listItems = products.map((p) => {
 //         return getListItem(p)
