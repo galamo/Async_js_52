@@ -7,11 +7,24 @@
 
 
 const mapping = {
-    firstName: { path: "name.first", isVisible: true },
-    lastName: { path: "name.last", isVisible: true },
+    name: { fn: getName, isVisible: true },
     city: { path: "location.city", isVisible: true },
     address: { path: "location.street.name", isVisible: true },
     src: { path: "picture.large", isVisible: true },
+
+}
+
+const mappingWithFunction = {
+    name: { fn: getName, isVisible: true },
+    name: { fn: getCity, isVisible: true },
+}
+
+function getName (user) {
+    return `${user.name.first} ${user.name.last}`
+}
+
+function getCity (user) {
+    return `${user.name.first} ${user.name.last}`
 }
 
 
@@ -44,11 +57,15 @@ function getMappedUser (user) {
     return keyValueMappingArray.reduce((mappedUser, KEYVALUEPAIR_ARRAY,) => {
         const [ key, settingObj ] = KEYVALUEPAIR_ARRAY
         const { path } = settingObj
-        return { ...mappedUser, [ key ]: getValueFromPath(path, user) }
+        const isFunction = typeof settingObj[ "fn" ] === 'function'
+        return { ...mappedUser, [ key ]: isFunction ? settingObj[ "fn" ](user) : getValueFromPath(path, user) }
     }, {})
 }
 
+
+
 function getValueFromPath (path, user) {
+    if (typeof path !== 'string') return
     const splittedPath = path.split(".")
     const theRequestedValue = splittedPath.reduce((currentUser, partOfPath) => {
         const isValueExist = currentUser[ partOfPath ]
@@ -65,3 +82,13 @@ function getValueFromPath (path, user) {
 
 
 // init()
+
+// function getMappedUserFn (user) {
+//     const keyValueMappingArray = Object.entries(mappingWithFunction)
+//     return keyValueMappingArray.reduce((mappedUser, KEYVALUEPAIR_ARRAY,) => {
+//         const [ key, settingObj ] = KEYVALUEPAIR_ARRAY
+
+//         // console.log(settingObj[ "fn" ])
+//         return { ...mappedUser, [ key ]: settingObj[ "fn" ](user) }
+//     }, {})
+// }
