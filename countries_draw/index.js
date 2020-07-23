@@ -23,6 +23,8 @@ function getBorders (country) {
     return borders
 }
 
+
+
 function getCurrencies (country) {
     const { currencies } = country
     if (!Array.isArray(currencies)) return
@@ -76,16 +78,65 @@ function getCard (country) {
     container.classList.add("container")
     container.id = "container-borders"
     btn.innerHTML = "Get Borders"
-    // btn.addEventListener("click", _drawBorders)
-    container.append(...elementsArray, btn)
+    btn.addEventListener("click", _drawBorders)
+    const containerBorders = document.createElement("DIV")
+    containerBorders.setAttribute("data-t-name", country.name)
+    container.append(...elementsArray, btn, containerBorders)
     div.append(container)
     return div
 
-
-    function _getBorders () {
+    function getSingleBorder () {
 
     }
 
+    async function _drawBorders () {
+        //  this  === BUTTON
+        console.log(containerBorders)
+        const { borders } = country
+        console.log(borders)
+        if (!Array.isArray(borders)) return
+        // fetch one by one
+        // for (let index = 0; index < borders.length; index++) {
+        //     const alpha3Code = borders[ index ]
+        //     const result = await getAPI({ url: `https://restcountries.eu/rest/v2/alpha/${alpha3Code}` })
+        //     await new Promise(r => setTimeout(r, 1000))
+        //     console.log(result.flag, index)
+        //     const flag = document.createElement("img")
+        //     flag.src = result.flag
+        //     flag.style.height = "100px"
+        //     flag.style.width = "100px"
+        //     containerBorders.append(flag)
+        // }
+
+
+        const bordersFlags = borders.map(async (alpha3Code, index) => {
+            console.log("start", index)
+            const result = await getAPI({ url: `https://restcountries.eu/rest/v2/alpha/${alpha3Code}` })
+            console.log("end", index)
+            const flag = document.createElement("img")
+            flag.src = result.flag
+            flag.style.height = "100px"
+            flag.style.width = "100px"
+            containerBorders.append(flag)
+            return result.flag
+        })
+
+        // Promise.all(bordersFlags).then(flags => {
+        //     const flagsImages = flags.map(flag => {
+        //         const flagImg = document.createElement("img")
+        //         flagImg.src = flag
+        //         flagImg.style.height = "100px"
+        //         flagImg.style.width = "100px"
+        //         flagImg.style.border = "1px solid black"
+        //         return flagImg
+        //     })
+        //     const between = document.createElement("h3")
+        //     between.innerHTML = "====================="
+        //     containerBorders.append(between)
+        //     containerBorders.append(...flagsImages)
+        // })
+        // console.log(bordersFlags)
+    }
 
 }
 
